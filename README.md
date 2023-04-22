@@ -1,64 +1,260 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# Base Laravel
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Base Laravel is used to abstract the data layer, making our application more flexible to maintain.
 
-## About Laravel
+You want to know a little more about the Repository pattern? [Read this great article](http://bit.ly/1IdmRNS).
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+use L5-repository: https://github.com/andersao/l5-repository
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Installation
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Composer
 
-## Learning Laravel
+Execute the following command to get the latest version of the package:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+```terminal
+composer require prettus/l5-repository
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Laravel
 
-## Laravel Sponsors
+#### >= laravel5.5
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+ServiceProvider will be attached automatically
 
-### Premium Partners
+#### Other
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+In your `config/app.php` add `Prettus\Repository\Providers\RepositoryServiceProvider::class` to the end of the `providers` array:
 
-## Contributing
+```php
+'providers' => [
+    ...
+    Prettus\Repository\Providers\RepositoryServiceProvider::class,
+],
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+If Lumen
 
-## Code of Conduct
+```php
+$app->register(Prettus\Repository\Providers\LumenRepositoryServiceProvider::class);
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Publish Configuration
 
-## Security Vulnerabilities
+```shell
+php artisan vendor:publish --provider "Prettus\Repository\Providers\RepositoryServiceProvider"
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Methods
 
-## License
+### Prettus\Repository\Contracts\RepositoryInterface
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- all($columns = array('*'))
+- first($columns = array('*'))
+- paginate($limit = null, $columns = ['*'])
+- find($id, $columns = ['*'])
+- findByField($field, $value, $columns = ['*'])
+- findWhere(array $where, $columns = ['*'])
+- findWhereIn($field, array $where, $columns = [*])
+- findWhereNotIn($field, array $where, $columns = [*])
+- findWhereBetween($field, array $where, $columns = [*])
+- create(array $attributes)
+- update(array $attributes, $id)
+- updateOrCreate(array $attributes, array $values = [])
+- delete($id)
+- deleteWhere(array $where)
+- orderBy($column, $direction = 'asc');
+- with(array $relations);
+- has(string $relation);
+- whereHas(string $relation, closure $closure);
+- hidden(array $fields);
+- visible(array $fields);
+- scopeQuery(Closure $scope);
+- getFieldsSearchable();
+- setPresenter($presenter);
+- skipPresenter($status = true);
+
+
+### Prettus\Repository\Contracts\RepositoryCriteriaInterface
+
+- pushCriteria($criteria)
+- popCriteria($criteria)
+- getCriteria()
+- getByCriteria(CriteriaInterface $criteria)
+- skipCriteria($status = true)
+- getFieldsSearchable()
+
+### Prettus\Repository\Contracts\CacheableInterface
+
+- setCacheRepository(CacheRepository $repository)
+- getCacheRepository()
+- getCacheKey($method, $args = null)
+- getCacheTime()
+- skipCache($status = true)
+
+### Prettus\Repository\Contracts\PresenterInterface
+
+- present($data);
+
+### Prettus\Repository\Contracts\Presentable
+
+- setPresenter(PresenterInterface $presenter);
+- presenter();
+
+### Prettus\Repository\Contracts\CriteriaInterface
+
+- apply($model, RepositoryInterface $repository);
+
+### Prettus\Repository\Contracts\Transformable
+
+- transform();
+
+### Repositories\Traits\RepositoryTraits
+
+- firstByWhere();
+- firstById();
+- multiDelete();
+- buildOrderBy();
+- buildLimit();
+- buildRelationShip();
+- isValidKey();
+## Usage
+
+### Create a Model
+
+Create your model normally, but it is important to define the attributes that can be filled from the input form data.
+
+```php
+namespace App;
+
+class Post extends Eloquent { // or Ardent, Or any other Model Class
+
+    protected $fillable = [
+        'title',
+        'author',
+        ...
+     ];
+
+     ...
+}
+```
+
+### Create a Repository
+
+```php
+namespace App;
+
+use Prettus\Repository\Eloquent\BaseRepository;
+
+class PostRepository extends BaseRepository {
+
+    /**
+     * Specify Model class name
+     *
+     * @return string
+     */
+    function model()
+    {
+        return "App\\Post";
+    }
+}
+```
+
+### Generators
+
+Create your repositories easily through the generator.
+
+#### Config
+
+You must first configure the storage location of the repository files. By default is the "app" folder and the namespace "App". Please note that, values in the `paths` array are acutally used as both *namespace* and file paths. Relax though, both foreward and backward slashes are taken care of during generation.
+
+```php
+    ...
+    'generator'  => [
+        'basePath'      => app()->path(),
+        'rootNamespace' => 'App\\',
+        'stubsOverridePath' => app()->path(),
+        'paths'         => [
+            'models'       => 'Entities',
+            'repositories' => 'Repositories',
+            'interfaces'   => 'Repositories',
+            'transformers' => 'Transformers',
+            'presenters'   => 'Presenters',
+            'validators'   => 'Validators',
+            'controllers'  => 'Http/Controllers',
+            'provider'     => 'RepositoryServiceProvider',
+            'criteria'     => 'Criteria'
+        ]
+    ]
+```
+
+
+#### Commands
+
+To generate everything you need for your Model, run this command:
+
+```terminal
+php artisan make:entity Post
+```
+
+To generate a repository for your Post model, use the following command
+
+```terminal
+php artisan make:repository Post
+```
+
+### Use methods
+
+```php
+namespace App\Http\Controllers;
+
+use App\PostService;
+
+class PostsController extends BaseController {
+
+    /**
+     * @var PostService
+     */
+    protected $postService;
+
+    public function __construct(PostService $postService){
+        $this->postService = $postService;
+    }
+
+    ....
+}
+```
+###System Architecture
+
+![plot](architech.webp)
+
+Controller -> Business Logic(Service) -> Repository  -> Data Source (Modal)
+  
+###Directory Structure    
+
+```
+├───Console
+├───Enums
+├───Exceptions
+├───Helpers
+├───Http
+│   ├───Controllers
+│   │   └───Api
+│   ├───Middleware
+│   └───Requests
+│       ├───Api
+│       └───Auth
+├───Models
+├───Presenters
+├───Providers
+├───Repositories
+│   ├───Contracts
+│   ├───Eloquent
+│   └───Traits
+├───Services
+│   ├───Api
+│   ├───Contracts
+│   └───Traits
+└───Transformers
+
+
