@@ -53,15 +53,4 @@ class ExampleRepositoryEloquent extends BaseRepository implements ExampleReposit
 
         return $model;
     }
-
-    /**
-     * Function store
-     *
-     * @param $values
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Support\Collection|mixed
-     */
-    public function store($values)
-    {
-        return $this->create($values);
-    }
 }

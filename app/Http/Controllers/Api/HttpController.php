@@ -24,7 +24,6 @@ abstract class HttpController extends BaseController
      * @param $errorCode
      * @param $message
      * @return \Illuminate\Http\JsonResponse
-     * @SuppressWarnings(PHPMD.ElseExpression)
      */
     public function reponseWithErrors($error = null, $httpCode = 500, $errorCode = 'E0003', $message = null)
     {
