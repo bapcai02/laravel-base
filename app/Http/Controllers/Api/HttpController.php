@@ -17,16 +17,15 @@ abstract class HttpController extends BaseController
     }
 
     /**
-     * Function reponseWithErrors
+     * Function responseWithErrors
      *
      * @param $error
      * @param $httpCode
      * @param $errorCode
      * @param $message
      * @return \Illuminate\Http\JsonResponse
-     * @SuppressWarnings(PHPMD.ElseExpression)
      */
-    public function reponseWithErrors($error = null, $httpCode = 500, $errorCode = 'E0003', $message = null)
+    public function responseWithErrors($error = null, $httpCode = 500, $errorCode = 'E0003', $message = null)
     {
 
         if (!$message) {
@@ -68,12 +67,12 @@ abstract class HttpController extends BaseController
     /**
      * Function responseWithPagination
      *
-     * @param $list
+     * @param $data
      * @return \Illuminate\Http\JsonResponse
      */
-    public function responseWithPagination($list)
+    public function responseWithPagination($data)
     {
-        $pagination = $list['meta']['pagination'];
+        $pagination = $data['meta']['pagination'];
 
         return response()->json([
             'success' => 1,
@@ -83,7 +82,7 @@ abstract class HttpController extends BaseController
                 'per_page' => $pagination['per_page'],
                 'current_page' => $pagination['current_page'],
                 'total_pages' => $pagination['total_pages'],
-                'list' => $list['data']
+                'list' => $data['data']
             ]
         ], 200);
     }

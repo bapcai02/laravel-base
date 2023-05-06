@@ -34,10 +34,4 @@ class ExamplesController extends HttpController
         $data = $this->examplesService->index($request);
         return $this->responseSuccess($data);
     }
-
-    public function store(Request $request)
-    {
-        $this->examplesService->store($request);
-        return $this->responseSuccess();
-    }
 }

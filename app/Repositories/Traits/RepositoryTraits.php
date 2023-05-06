@@ -29,7 +29,7 @@ trait RepositoryTraits
 
         $model = $this->model;
 
-        $model = $this->buildRelationShip($model, $relationship);
+        $model = $this->relationShip($model, $relationship);
         $model = $model->first($columns);
         $this->resetModel();
 
@@ -55,7 +55,7 @@ trait RepositoryTraits
 
         $model = $this->model;
 
-        $model = $this->buildRelationShip($model, $relationship);
+        $model = $this->relationShip($model, $relationship);
         $model = $model->find($id);
 
         $this->resetModel();
@@ -82,7 +82,7 @@ trait RepositoryTraits
 
         $model = $this->model;
 
-        $model = $this->buildRelationShip($model, $relationship);
+        $model = $this->relationShip($model, $relationship);
         $model = $model->whereIn('id', $ids)->delete();
 
         $this->resetModel();
@@ -129,13 +129,13 @@ trait RepositoryTraits
     }
 
     /**
-     * Function buildRelationShip
+     * Function relationShip
      *
      * @param $model
      * @param array $relationship
      * @return \Illuminate\Database\Eloquent\Model
      */
-    private function buildRelationShip($model, $relationship = [])
+    private function relationShip($model, $relationship = [])
     {
         if (!empty($relationship)) {
             $model = $model->with($relationship);
@@ -154,5 +154,130 @@ trait RepositoryTraits
     private function isValidKey($array, $key)
     {
         return array_key_exists($key, $array) && !is_null($array[$key]);
+    }
+
+    /**
+     * Function firstByFilters
+     *
+     * @param array $filters
+     * @param array $relationship
+     * @param array $orderBy
+     * @return \Illuminate\Database\Eloquent\Collection | null
+     */
+    public function firstByFilters($filters = [], $relationship = [], $orderBy = [])
+    {
+        $this->applyCriteria();
+        $this->applyScope();
+
+        $model = $this->model;
+        $model = $this->initQuery($model, $filters);
+        $model = $this->relationShip($model, $relationship);
+        $model = $this->buildOrderBy($model, $orderBy);
+        $model = $model->first();
+
+        $this->resetModel();
+
+        return $this->parserResult($model);
+    }
+
+
+    /**
+     * Function firstByFiltersWithTrashed
+     *
+     * @param array $filters
+     * @param array $relationship
+     * @param array $orderBy
+     * @return \Illuminate\Database\Eloquent\Collection | null
+    */
+    public function firstByFiltersWithTrashed($filters = [], $relationship = [], $orderBy = [])
+    {
+        $this->applyCriteria();
+        $this->applyScope();
+
+        $model = $this->model;
+        $model = $this->initQuery($model, $filters);
+        $model = $this->relationShip($model, $relationship);
+        $model = $this->buildOrderBy($model, $orderBy);
+        $model = $model->withTrashed()->first();
+
+        $this->resetModel();
+
+        return $this->parserResult($model);
+    }
+
+    /**
+     * Function getByFilters
+     *
+     * @param array $filters
+     * @param array $relationship
+     * @param int $limit
+     * @param int $offset
+     * @param array $orderBy
+     * @return \Illuminate\Database\Eloquent\Collection | null
+     */
+    public function getByFilters($filters = [], $relationship = [], $limit = 10, $offset = 0, $orderBy = [])
+    {
+        $this->applyCriteria();
+        $this->applyScope();
+
+        $model = $this->model;
+        $model = $this->initQuery($model, $filters);
+        $model = $this->relationShip($model, $relationship);
+        $model = $this->buildLimit($model, $limit, $offset);
+        $model = $this->buildOrderBy($model, $orderBy);
+        $model = $model->get();
+
+        $this->resetModel();
+
+        return $this->parserResult($model);
+    }
+
+    /**
+     * Function getAllByFilters
+     *
+     * @param array $filters
+     * @param array $relationship
+     * @param array $orderBy
+     * @return \Illuminate\Database\Eloquent\Collection | null
+     */
+    public function getAllByFilters($filters = [], $relationship = [], $orderBy = [])
+    {
+        $this->applyCriteria();
+        $this->applyScope();
+
+        $model = $this->model;
+        $model = $this->initQuery($model, $filters);
+        $model = $this->relationShip($model, $relationship);
+        $model = $this->buildOrderBy($model, $orderBy);
+        $model = $model->get();
+
+        $this->resetModel();
+
+        return $this->parserResult($model);
+    }
+
+    /**
+     * Function paginateByFilters
+     *
+     * @param array $filters
+     * @param int $pageSize
+     * @param array $relationship
+     * @param array $orderBy
+     * @return \Illuminate\Pagination\LengthAwarePaginator | null
+     */
+    public function paginateByFilters($filters = [], $pageSize = 15, $relationship = [], $orderBy = [])
+    {
+        $this->applyCriteria();
+        $this->applyScope();
+
+        $model = $this->model;
+        $model = $this->initQuery($model, $filters);
+        $model = $this->relationShip($model, $relationship);
+        $model = $this->buildOrderBy($model, $orderBy);
+        $model = $model->paginate($pageSize);
+
+        $this->resetModel();
+
+        return $this->parserResult($model);
     }
 }
